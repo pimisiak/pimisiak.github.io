@@ -84,10 +84,10 @@ $(document).ready(function() {
     var taskId = parentEl.attr('data-task-id');
     var taskTitle = parentEl.find('[data-task-name-input]').val();
     var taskContent = parentEl.find('[data-task-content-input]').val();
-    var requestUrl = apiRoot;
+    var requestUrl = apiRoot + '/' + taskId;
 
     $.ajax({
-      url: requestUrl + '/' + taskId,
+      url: requestUrl,
       method: "PUT",
       processData: false,
       contentType: "application/json; charset=utf-8",
@@ -107,10 +107,10 @@ $(document).ready(function() {
   function handleTaskDeleteRequest() {
     var parentEl = $(this).parents('[data-task-id]');
     var taskId = parentEl.attr('data-task-id');
-    var requestUrl = apiRoot;
+    var requestUrl = apiRoot + '/' + taskId;
 
     $.ajax({
-      url: requestUrl + '/' + taskId,
+      url: requestUrl,
       method: 'DELETE',
       success: function() {
         parentEl.slideUp(400, function() { parentEl.remove(); });
@@ -136,7 +136,7 @@ $(document).ready(function() {
         title: taskTitle,
         content: taskContent
       }),
-      success: getAllTasks
+      complete: getAllTasks
     });
   }
 
