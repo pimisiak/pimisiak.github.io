@@ -2,25 +2,24 @@ $(document).ready(function() {
   const apiRoot = 'https://kodilla-tasks.herokuapp.com/api/v1/tasks';
   const trelloApiRoot = 'https://kodilla-tasks.herokuapp.com/api/v1/trello';
   const datatableRowTemplate = $('[data-datatable-row-template]').children()[0];
-  const tasksContainer = $('[data-tasks-container]');
+  const $tasksContainer = $('[data-tasks-container]');
 
   var availableBoards = {};
   var availableTasks = {};
 
   // init
+
   getAllTasks();
 
   function getAllAvailableBoards(callback, callbackArgs) {
-    var requestUrl = trelloApiRoot + '/boards'
+    var requestUrl = trelloApiRoot + '/boards';
 
     $.ajax({
       url: requestUrl,
       method: 'GET',
       contentType: 'application/json',
-      success: function(boards) {
-        callback(callbackArgs, boards);
-      }
-    })
+      success: function(boards) { callback(callbackArgs, boards); }
+    });
   }
 
   function createElement(data) {
@@ -46,7 +45,7 @@ $(document).ready(function() {
   }
 
   function handleDatatableRender(taskData, boards) {
-    tasksContainer.empty();
+    $tasksContainer.empty();
     boards.forEach(board => {
       availableBoards[board.id] = board;
     });
@@ -59,13 +58,13 @@ $(document).ready(function() {
         .append($availableBoardsOptionElements);
 
       $datatableRowEl
-        .appendTo(tasksContainer);
+        .appendTo($tasksContainer);
     });
   }
 
   function getAllTasks() {
     const requestUrl = apiRoot;
-    
+
     $.ajax({
       url: requestUrl,
       method: 'GET',
@@ -137,16 +136,12 @@ $(document).ready(function() {
         title: taskTitle,
         content: taskContent
       }),
-      complete: function(data) {
-        if(data.status === 200) {
-          getAllTasks();
-        }
-      }
+      success: getAllTasks
     });
   }
 
   function toggleEditingState() {
-    var parentEl = $(this).parent().parent();
+    var parentEl = $(this).parents('[data-task-id]');
     parentEl.toggleClass('datatable__row--editing');
 
     var taskTitle = parentEl.find('[data-task-name-paragraph]').text();
@@ -197,10 +192,10 @@ $(document).ready(function() {
 
   $('[data-task-add-form]').on('submit', handleTaskSubmitRequest);
 
-  tasksContainer.on('change','[data-board-name-select]', handleBoardNameSelect);
-  tasksContainer.on('click','[data-trello-card-creation-trigger]', handleCardCreationRequest);
-  tasksContainer.on('click','[data-task-edit-button]', toggleEditingState);
-  tasksContainer.on('click','[data-task-edit-abort-button]', toggleEditingState);
-  tasksContainer.on('click','[data-task-submit-update-button]', handleTaskUpdateRequest);
-  tasksContainer.on('click','[data-task-delete-button]', handleTaskDeleteRequest);
+  $tasksContainer.on('change','[data-board-name-select]', handleBoardNameSelect);
+  $tasksContainer.on('click','[data-trello-card-creation-trigger]', handleCardCreationRequest);
+  $tasksContainer.on('click','[data-task-edit-button]', toggleEditingState);
+  $tasksContainer.on('click','[data-task-edit-abort-button]', toggleEditingState);
+  $tasksContainer.on('click','[data-task-submit-update-button]', handleTaskUpdateRequest);
+  $tasksContainer.on('click','[data-task-delete-button]', handleTaskDeleteRequest);
 });
